@@ -51,6 +51,8 @@ MIDDLEWARE = [
 
 ]
 
+CORS_ORIGIN_ALLOW_ALL = True
+
 ROOT_URLCONF = 'eureka.urls'
 
 TEMPLATES = [
@@ -80,7 +82,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'unimorph',
         'USER': 'postgres',
-        'PASSWORD': 'posgres',
+        'PASSWORD': 'postgres',
         'HOST': 'localhost',
         'PORT': '5432',
     }
