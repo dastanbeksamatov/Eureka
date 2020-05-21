@@ -23,7 +23,8 @@ class APIRootList(APIView):
             'dimensions': reverse('dimensions', request=request),
             'lemmas': reverse('lemmas', request=request),
             'tagsets': reverse('tagsets', request=request),
-            'families': reverse('families', request=request)
+            'families': reverse('families', request=request),
+            'genuses': reverse('genuses', request=request)
         }
         return Response(data)
 
@@ -136,10 +137,14 @@ class WordDetail(APIView):
         options = getDimOptions(serializer.data['tagset'])
         serializer_data = serializer.data
         serializer_data['dimensions'] = options
-        return Response(serializer_data, headers={"Access-Control-Allow-Origin": "*"})
+        return Response(serializer_data,
+                        headers={"Access-Control-Allow-Origin": "*"})
 
     def options(self, request, pk):
-        return Response(status=status.HTTP_200_OK, headers={"Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "access-control-allow-origin"})
+        return Response(status=status.HTTP_200_OK,
+                        headers={"Access-Control-Allow-Origin": "*",
+                                 "Access-Control-Allow-Headers":
+                                     "access-control-allow-origin"})
 
 
 class LemmaList(APIView):
@@ -165,7 +170,7 @@ class LemmaDetail(APIView):
 
     def get(self, request, pk):
         lemma = self.get_lemma(pk)
-        serializer = LemmaDetailSerializer(data=lemma)
+        serializer = LemmaDetailSerializer(lemma)
         return Response(serializer.data)
 
 
@@ -192,7 +197,7 @@ class GenusDetail(APIView):
 
     def get(self, request, pk):
         genus = self.get_genus(pk)
-        serializer = GenusSerializer(data=genus)
+        serializer = GenusSerializer(genus)
         return Response(serializer.data)
 
 
