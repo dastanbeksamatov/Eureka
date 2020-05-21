@@ -7,10 +7,11 @@ from wordDictionary.models import (Feature, Language, Dimension, Word,
                                    Lemma, TagSet, Family, Genus)
 from .serializers import (FeatureListSerializer, FeatureDetailSerializer,
                           LanguageSerializer, DimensionSerializer,
-                          WordListSerializer, TagSetSerializer,
+                          WordListSerializer, TagSetListSerializer,
                           LemmaListSerializer, LemmaDetailSerializer,
                           FamilySerializer, GenusSerializer,
-                          WordDetailSerializer)
+                          WordDetailSerializer, TagSetDetailSerializer)
+from .utils import getDimOptions
 
 
 class APIRootList(APIView):
@@ -115,7 +116,7 @@ class WordList(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        serializer = WordListSerializer(request.data)
+        serializer = WordListSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -132,8 +133,11 @@ class WordDetail(APIView):
     def get(self, request, pk):
         word = self.get_word(pk)
         serializer = WordDetailSerializer(word)
-        return Response(serializer.data, headers={"Access-Control-Allow-Origin": "*"})
-  
+        options = getDimOptions(serializer.data['tagset'])
+        serializer_data = serializer.data
+        serializer_data['dimensions'] = options
+        return Response(serializer_data, headers={"Access-Control-Allow-Origin": "*"})
+
     def options(self, request, pk):
         return Response(status=status.HTTP_200_OK, headers={"Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "access-control-allow-origin"})
 
@@ -145,7 +149,7 @@ class LemmaList(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        serializer = LemmalistSerializer(request.data)
+        serializer = LemmaListSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -161,7 +165,7 @@ class LemmaDetail(APIView):
 
     def get(self, request, pk):
         lemma = self.get_lemma(pk)
-        serializer = LemmaDetailSerializer(lemma)
+        serializer = LemmaDetailSerializer(data=lemma)
         return Response(serializer.data)
 
 
@@ -172,7 +176,7 @@ class GenusList(APIView):
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        serializer = GenusSerializer(request.data)
+        serializer = GenusSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -188,18 +192,18 @@ class GenusDetail(APIView):
 
     def get(self, request, pk):
         genus = self.get_genus(pk)
-        serializer = GenusSerializer(genus)
+        serializer = GenusSerializer(data=genus)
         return Response(serializer.data)
 
 
 class TagSetList(APIView):
     def get(self, request, format=None):
         tagsets = TagSet.objects.all()
-        serializer = TagSetSerializer(tagsets, many=True)
+        serializer = TagSetListSerializer(tagsets, many=True)
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        serializer = TagSetSerializer(request.data)
+        serializer = TagSetListSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -215,7 +219,7 @@ class TagSetDetail(APIView):
 
     def get(self, request, pk):
         tagset = self.get_tagset(pk)
-        serializer = TagSetSerializer(tagset)
+        serializer = TagSetDetailSerializer(tagset)
         return Response(serializer.data)
 
 
