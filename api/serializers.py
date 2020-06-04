@@ -47,16 +47,11 @@ class LemmaDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Lemma
+        lookup_field = 'name'
         fields = '__all__'
 
 
-class TagSetListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TagSet
-        fields = '__all__'
-
-
-class TagSetDetailSerializer(serializers.ModelSerializer):
+class TagSetSerializer(serializers.ModelSerializer):
     features = FeatureDetailSerializer(many=True, read_only=True)
 
     class Meta:
@@ -84,8 +79,14 @@ class WordListSerializer(serializers.ModelSerializer):
 
 class WordDetailSerializer(serializers.ModelSerializer):
     lemma = LemmaDetailSerializer(read_only=True)
-    tagset = TagSetDetailSerializer(read_only=True)
+    tagset = TagSetSerializer(read_only=True)
 
     class Meta:
         model = Word
         fields = '__all__'
+
+
+class RelatedWordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Word
+        fields = ['id', 'name']

@@ -1,6 +1,6 @@
-from api.serializers import (TagSetDetailSerializer, FeatureDetailSerializer, 
+from api.serializers import (FeatureDetailSerializer,
                              DimensionSerializer)
-from wordDictionary.models import TagSet, Feature, Dimension
+from wordDictionary.models import Feature, Dimension
 
 
 # Returns all the possible features for
