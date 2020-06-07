@@ -1,4 +1,10 @@
+<<<<<<< HEAD
 from api.models import Feature, Language, Dimension, Word, TagSet, Family, Genus, Lemma, POS
+=======
+from wordDictionary.models import (Feature, Language, Dimension, Word, TagSet,
+                                   Genus, Family, Lemma, POS)
+from django.contrib.auth.models import User, Group
+>>>>>>> Add user model
 from rest_framework import serializers
 
 
@@ -59,6 +65,23 @@ class PosSerializer(serializers.ModelSerializer):
 
 
 class RelatedWordSerializer(serializers.ModelSerializer):
+    tagset = TagSetSerializer(read_only=True)
+
     class Meta:
         model = Word
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'tagset']
+
+
+class GroupSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Group
+        fields = ['name']
+
+
+class UserSerializer(serializers.ModelSerializer):
+    groups = GroupSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = User
+        fields = ['username', 'password', 'email', 'first_name', 'last_name', 'groups']

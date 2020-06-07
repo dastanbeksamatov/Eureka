@@ -25,6 +25,13 @@ def getDimOptions(tagset):
         for d in dim.data:
             if(f['dimension']['id'] == d['id'] and d['name'] in tag_names):
                 if(f['name'] in feat_names):
-                    result[d['name']].add((f['name'], True))
-                result[d['name']].add((f['name'], False))
+                    result[d['name']].add(f['name'])
+                result[d['name']].add(f['name'])
+    return result
+
+
+def getFeatures(tagset):
+    result = []
+    for i in tagset['features']:
+        result.append({i['dimension']['name']: i['name']})
     return result

@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
     path('', views.APIRootList.as_view(), name='root'),
+    path('users/', views.UserList.as_view(), name='users'),
     path('languages/', views.LanguageList.as_view(), name='languages'),
     path('dimensions/', views.DimensionList.as_view(), name='dimensions'),
     path('features/', views.FeatureList.as_view(), name='features'),
