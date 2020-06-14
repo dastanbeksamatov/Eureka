@@ -1,33 +1,39 @@
-from django.http import Http404
-from rest_framework import status
+from django.shortcuts import get_object_or_404
+from rest_framework import status, generics
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from wordDictionary.models import Dimension
+from django_filters.rest_framework import DjangoFilterBackend
+from ..models import Dimension
 from ..serializers import DimensionSerializer
+from ..utils import getAllFeatures
 
 
-class DimensionList(APIView):
-    def get(self, request, format=None):
-        queryset = Dimension.objects.all()
-        serializer = DimensionSerializer(queryset, many=True)
-        return Response(serializer.data)
+class DimensionList(generics.ListCreateAPIView):
+    queryset = Dimension.objects.all()
+    serializer_class = DimensionSerializer
+    filter_backends = [DjangoFilterBackend]
+    search_fields = ['name']
+    
+    def options(self, request):
+        return Response(status=status.HTTP_200_OK,
+                    headers={"Access-Control-Allow-Origin": "*",
+                                "Access-Control-Allow-Headers":
+                                "access-control-allow-origin"})
 
-    def post(seld, request, format=None):
-        serializer = DimensionSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
-
-
-class DimensionDetail(APIView):
-    def get_dimension(self, name):
-        try:
-            return Dimension.objects.filter(name=name)
-        except Dimension.DoesNotExist:
-            raise Http404
-
-    def get(self, request, slug, format=None):
-        dimension = self.get_dimension(slug)
-        serializer = DimensionSerializer(dimension[0])
-        return Response(serializer.data)
+class DimensionDetail(generics.RetrieveUpdateAPIView):
+    queryset = Dimension.objects.all()
+    serializer_class = DimensionSerializer
+    lookup_field = 'name'
+    
+    def retrieve(self, request, name, format=None):
+        dimension = self.get_object()
+        serializer = DimensionSerializer(dimension)
+        dim_data = serializer.data
+        dims = getAllFeatures(dimension=dimension)
+        dim_data['options'] = dims
+        return Response(dim_data, status=status.HTTP_200_OK)
+    
+    def options(self, request, name):
+        return Response(status=status.HTTP_200_OK,
+                    headers={"Access-Control-Allow-Origin": "*",
+                                "Access-Control-Allow-Headers":
+                                "access-control-allow-origin"})

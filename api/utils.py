@@ -1,6 +1,6 @@
-from api.serializers import (TagSetDetailSerializer, FeatureDetailSerializer, 
+from api.serializers import (FeatureSerializer,
                              DimensionSerializer)
-from wordDictionary.models import TagSet, Feature, Dimension
+from .models import Feature, Dimension
 
 
 # Returns all the possible features for
@@ -11,7 +11,7 @@ def getDimOptions(tagset):
     # result is returned as a dictionary
     result = {}
     dim = DimensionSerializer(Dimension.objects.all(), many=True)
-    feat = FeatureDetailSerializer(Feature.objects.all(), many=True)
+    feat = FeatureSerializer(Feature.objects.all(), many=True)
     # stores all unique dimensions that are possible in a language
     tag_names = set([])
     # stores all feature names of a ward
@@ -24,8 +24,6 @@ def getDimOptions(tagset):
     for f in feat.data:
         for d in dim.data:
             if(f['dimension']['id'] == d['id'] and d['name'] in tag_names):
-                if(f['name'] in feat_names):
-                    result[d['name']].add(f['name'])
                 result[d['name']].add(f['name'])
     return result
 
@@ -34,4 +32,12 @@ def getFeatures(tagset):
     result = []
     for i in tagset['features']:
         result.append({i['dimension']['name']: i['name']})
+    return result
+
+def getAllFeatures(dimension):
+    result = set([])
+    features = Feature.objects.filter(dimension=dimension.id)
+    feats = FeatureSerializer(features, many=True)
+    for feat in feats.data:
+        result.add(feat['name'])
     return result

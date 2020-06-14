@@ -1,10 +1,6 @@
-<<<<<<< HEAD
-from api.models import Feature, Language, Dimension, Word, TagSet, Family, Genus, Lemma, POS
-=======
-from wordDictionary.models import (Feature, Language, Dimension, Word, TagSet,
-                                   Genus, Family, Lemma, POS)
+from .models import (Feature, Language, Dimension, Word, TagSet,
+                     Genus, Family, Lemma, POS)
 from django.contrib.auth.models import User, Group
->>>>>>> Add user model
 from rest_framework import serializers
 
 
@@ -20,15 +16,34 @@ class LanguageSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class PosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = POS
+        fields = '__all__'
+
+
+
 class DimensionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dimension
         fields = '__all__'
 
 
-class WordSerializer(serializers.ModelSerializer):
+class FeatureSerializer(serializers.ModelSerializer):
+    dimension = DimensionSerializer(read_only=True)
+
     class Meta:
-        model = Word
+        model = Feature
+        fields = '__all__'
+
+
+class LemmaSerializer(serializers.ModelSerializer):
+    language = LanguageSerializer(read_only=True)
+    pos = PosSerializer(read_only=True)
+
+    class Meta:
+        model = Lemma
+        lookup_field = 'name'
         fields = '__all__'
 
 
@@ -46,21 +61,19 @@ class FamilySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+
+class WordSerializer(serializers.ModelSerializer):
+    lemma = LemmaSerializer(read_only=True)
+    tagset = TagSetSerializer(read_only=True)
+    class Meta:
+        model = Word
+        fields = '__all__'
+
+
+
 class GenusSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genus
-        fields = '__all__'
-
-
-class LemmaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Lemma
-        fields = '__all__'
-
-
-class PosSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = POS
         fields = '__all__'
 
 
