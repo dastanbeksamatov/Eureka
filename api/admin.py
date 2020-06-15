@@ -1,7 +1,6 @@
 from django.contrib import admin
-from api.models import Genus, Word, Feature, Dimension, Language, Lemma, Family, TagSet, POS
-
-
+from django.contrib.auth.models import Permission
+from .models import Genus, Word, Feature, Dimension, Language, Lemma, Family, TagSet, POS
 
 # Register your models here.
 admin.site.register(Word)
