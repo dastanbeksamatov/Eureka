@@ -1,5 +1,5 @@
 from django.http import Http404
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_list_or_404
 from django.core.exceptions import MultipleObjectsReturned
 from rest_framework import status, generics, filters
 from rest_framework.response import Response
@@ -35,6 +35,12 @@ class LemmaDetail(generics.RetrieveUpdateAPIView):
         except Word.DoesNotExist:
             return Http404
 
+    def get_object(self):
+        queryset = self.get_queryset()
+        filter = {self.lookup_field: self.kwargs[self.lookup_field]}
+        objs = get_list_or_404(queryset, **filter)
+        return objs[0]
+    
     def retrieve(self, request, name, format=None):
         lemma = self.get_object()
         serializer = LemmaSerializer(lemma)

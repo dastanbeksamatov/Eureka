@@ -1,7 +1,7 @@
 
 
 from django.http import Http404
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_list_or_404
 from django.core.exceptions import MultipleObjectsReturned
 from rest_framework import status, generics, filters
 from django_filters.rest_framework import DjangoFilterBackend
@@ -15,7 +15,7 @@ class WordList(generics.ListCreateAPIView):
     queryset = Word.objects.all()
     serializer_class = WordSerializer
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
-    search_fields = ['name', 'lemma']
+    search_fields = ['name']
 
     def options(self, request):
         return Response(status=status.HTTP_200_OK,
@@ -29,6 +29,12 @@ class WordDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = WordSerializer
     lookup_field = 'name'
 
+    def get_object(self):
+        queryset = self.get_queryset()
+        filter = {self.lookup_field: self.kwargs[self.lookup_field]}
+        objs = get_list_or_404(queryset, **filter)
+        return objs[0]
+    
     def retrieve(self, request, name):
         word = self.get_object()
         serializer = WordSerializer(word)
