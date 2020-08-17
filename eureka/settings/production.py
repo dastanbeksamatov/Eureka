@@ -17,7 +17,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 
 DEBUG = False
 
-ALLOWED_HOSTS = [ '0.0.0.0', 'unimorph.ethz.ch' ]
+ALLOWED_HOSTS = [ '0.0.0.0', 'unimorph.ethz.ch', '*' ]
 
 
 # Application definition
@@ -42,7 +42,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
+    'api.middlewares.HeaderMiddleware'
 ]
 
 ROOT_URLCONF = 'eureka.urls'
@@ -107,7 +107,9 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
        'rest_framework.authentication.SessionAuthentication',
-    ),
+       ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 72,
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
 

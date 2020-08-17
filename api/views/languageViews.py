@@ -1,7 +1,7 @@
 from rest_framework import status, generics
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
-from ..models import Language, Lemma, Word
+from ..models import Language
 from ..serializers import LanguageSerializer
 
 
