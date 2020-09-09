@@ -1,18 +1,20 @@
-from api.serializers import (FeatureSerializer,
-                             DimensionSerializer)
-from .models import Feature, Dimension, Word
-
-from django.http import Http404, HttpResponse
-from rest_framework.response import Response
 import csv
-from django.db import connection
-from django.utils import timezone
-from django.db.models import F
-from io import StringIO, BytesIO
+from io import BytesIO, StringIO
 from zipfile import ZipFile
+
+from api.serializers import DimensionSerializer, FeatureSerializer
+from django.db import connection
+from django.db.models import F
+from django.http import Http404, HttpResponse
+from django.utils import timezone
+from rest_framework.response import Response
+
+from .models import Dimension, Feature, Word
+
 # Returns all the possible features for
 # the word's dimension in following format:
 # { 'dim1': [['feat1', True], ['feat2', False], ...], ... }
+
 
 def getDimOptions(tagset):
     # result is returned as a dictionary
@@ -36,10 +38,9 @@ def getDimOptions(tagset):
 
 
 def getFeatures(tagset):
-    result = []
-    for i in tagset['features']:
-        result.append({i['dimension']['name']: i['name']})
+    result = [{x['dimension']['name']: x['name']} for x in tagset['features']]
     return result
+
 
 def getAllFeatures(dimension):
     result = set([])
@@ -72,7 +73,7 @@ class Response():
         languageList = list(allLanguages)
         for language in languageList:
             # Determine the queryset
-            querySet =  self.wordFormatFile(language)
+            querySet = self.wordFormatFile(language)
             sql, params = querySet.query.sql_with_params()
             sql = f"COPY ({sql}) TO STDOUT WITH (FORMAT CSV, HEADER, DELIMITER E',')"
             subfileName = f'{language}.csv'
@@ -92,9 +93,9 @@ class Response():
 
     def wordFormatFile(self, languageObject):
         """ Fix the format in which words will be displayed in files """
-        querySet =  Word.objects.filter(language=languageObject.id).values(
+        querySet = Word.objects.filter(language=languageObject.id).values(
             'name',
-            lemma_name = F('lemma__name'),
-            tagset_name = F('tagset__name'),
+            lemma_name=F('lemma__name'),
+            tagset_name=F('tagset__name'),
         )
         return querySet

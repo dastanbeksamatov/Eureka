@@ -1,9 +1,10 @@
+from django.core.exceptions import MultipleObjectsReturned
 from django.http import Http404
 from django.shortcuts import get_list_or_404
-from django.core.exceptions import MultipleObjectsReturned
-from rest_framework import status, generics, filters
-from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, generics, status
+from rest_framework.response import Response
+
 from ..models import Lemma, Word
 from ..serializers import LemmaSerializer, RelatedWordSerializer
 from ..utils import getDimOptions, getFeatures
@@ -14,7 +15,8 @@ class LemmaList(generics.ListCreateAPIView):
     serializer_class = LemmaSerializer
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     filterset_fields = ['language', 'animacy', 'transivity', 'author', 'pos', 'date_updated']
-    search_fields = ['name']
+    search_fields = ['^name']
+
     def options(self, request):
         return Response(status=status.HTTP_200_OK,
                         headers={"Access-Control-Allow-Origin": "*",
@@ -39,7 +41,7 @@ class LemmaDetail(generics.RetrieveUpdateAPIView):
         filter = {self.lookup_field: self.kwargs[self.lookup_field]}
         objs = get_list_or_404(queryset, **filter)
         return objs[0]
-    
+
     def retrieve(self, request, name, format=None):
         lemma = self.get_object()
         serializer = LemmaSerializer(lemma)

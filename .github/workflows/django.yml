@@ -1,4 +1,4 @@
-name: Django CI Pipeline
+name: Test Pipeline
 
 on:
   push:

@@ -1,5 +1,6 @@
-from rest_framework import status, generics
 from django.contrib.auth.models import User
+from rest_framework import generics, status
+
 from ..serializers import UserSerializer
 
 

@@ -1,7 +1,8 @@
-from .models import (Feature, Language, Dimension, Word, TagSet,
-                     Genus, Family, Lemma, POS)
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import Group, User
 from rest_framework import serializers
+
+from .models import (POS, Dimension, Family, Feature, Genus, Language, Lemma,
+                     TagSet, Word)
 
 
 class FeatureSerializer(serializers.ModelSerializer):
@@ -46,7 +47,7 @@ class FamilySerializer(serializers.ModelSerializer):
 class LanguageSerializer(serializers.ModelSerializer):
     genus = GenusSerializer(read_only=True)
     family = FamilySerializer(read_only=True)
-    
+
     class Meta:
         model = Language
         fields = '__all__'
