@@ -38,11 +38,19 @@ class WordDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def retrieve(self, request, name):
         word = self.get_object()
-        serializer = WordSerializer(word)
+        serializer = self.get_serializer(word)
         options = getDimOptions(serializer.data['tagset'])
         serializer_data = serializer.data
         serializer_data['dimensions'] = options
         return Response(serializer_data,
+                        headers={"Access-Control-Allow-Origin": "*"})
+        
+    def update(self, request, name):
+        word = self.get_object();
+        serializer = self.get_serializer(word, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data, 
                         headers={"Access-Control-Allow-Origin": "*"})
 
     def options(self, request, name):
