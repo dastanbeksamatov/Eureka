@@ -16,7 +16,7 @@ class LemmaList(generics.ListCreateAPIView):
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     filterset_fields = ['language', 'animacy', 'transivity', 'author', 'pos', 'date_updated']
     search_fields = ['^name']
-
+        
     def options(self, request):
         return Response(status=status.HTTP_200_OK,
                         headers={"Access-Control-Allow-Origin": "*",
@@ -27,7 +27,7 @@ class LemmaList(generics.ListCreateAPIView):
 class LemmaDetail(generics.RetrieveUpdateAPIView):
     queryset = Lemma.objects.all()
     serializer_class = LemmaSerializer
-    lookup_field = 'name'
+    lookup_field = '^name'
 
     def get_related_words(self, pk):
         try:

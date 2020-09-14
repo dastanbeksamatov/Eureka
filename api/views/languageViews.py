@@ -10,7 +10,7 @@ class LanguageList(generics.ListCreateAPIView):
     queryset = Language.objects.all()
     serializer_class = LanguageSerializer
     filter_backends = [DjangoFilterBackend]
-    search_fields = ['name']
+    search_fields = ['^name']
 
     def options(self, request):
         return Response(status=status.HTTP_200_OK,
